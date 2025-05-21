@@ -8,3 +8,15 @@ This confirmed that the server correctly receives and rebroadcasts messages usin
 
 Here’s what I saw from one of the clients:
 ![img.png](img.png)![img_1.png](img_1.png)![img_2.png](img_2.png)![img_3.png](img_3.png)
+
+### Tutorial 2.2: Modifying the WebSocket Port
+
+I modified the WebSocket port from `2000` to `8080` to better simulate a real-world production environment where port `8080` is more commonly used. To do this, I updated both the client and server so that they would communicate over the same port.
+
+In the server (`server.rs`), I changed the `TcpListener` to bind on `"127.0.0.1:8080"`. On the client side (`client.rs`), I updated the URI passed to `ClientBuilder::from_uri()` to `"ws://127.0.0.1:8080"`.
+
+After making these changes, I ran the server and then launched three clients. Everything worked as expected: the server accepted connections on port 8080, and all messages sent by one client were received by all others. This shows that the WebSocket protocol (`ws://`) still works the same as long as both sides agree on the port.
+
+The WebSocket protocol is defined by the URI string in the client and the TCP bind address in the server.
+
+![img_4.png](img_4.png)![img_5.png](img_5.png)![img_6.png](img_6.png)![img_7.png](img_7.png)
