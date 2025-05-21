@@ -24,7 +24,8 @@ async fn handle_connection(
                     Some(Ok(msg)) => {
                         if let Some(text) = msg.as_text() {
                             println!("From client {addr:?} {text:?}");
-                            bcast_tx.send(text.to_string())?;
+                            let tagged = format!("{}: {}", addr, text);
+                            bcast_tx.send(tagged)?;
                         }
                     }
                     Some(Err(err)) => return Err(err.into()),
@@ -49,9 +50,19 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         let (socket, addr) = listener.accept().await?;
         println!("New connection from {addr:?}");
         let bcast_tx = bcast_tx.clone();
+
         tokio::spawn(async move {
-            let ws_stream = ServerBuilder::new().accept(socket).await?;
-            handle_connection(addr, ws_stream, bcast_tx).await
+            let result = ServerBuilder::new().accept(socket).await;
+            match result {
+                Ok(ws_stream) => {
+                    if let Err(e) = handle_connection(addr, ws_stream, bcast_tx).await {
+                        eprintln!("Error handling connection from {addr}: {e}");
+                    }
+                }
+                Err(e) => {
+                    eprintln!("WebSocket handshake failed from {addr}: {e}");
+                }
+            }
         });
     }
 }

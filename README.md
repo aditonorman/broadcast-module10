@@ -20,3 +20,11 @@ After making these changes, I ran the server and then launched three clients. Ev
 The WebSocket protocol is defined by the URI string in the client and the TCP bind address in the server.
 
 ![img_4.png](img_4.png)![img_5.png](img_5.png)![img_6.png](img_6.png)![img_7.png](img_7.png)
+
+### Experiment 2.3: Small Changes — Add IP and Port
+
+In this step, I modified the server to include the sender's IP address and port in the message it broadcasts. Since we don't have usernames yet, I wanted to make it clear which client sent which message. I updated the broadcast message format inside `server.rs` to prepend the client's socket address (`addr`) to the message content.
+
+After this change, when one client sends a message, the other clients receive it along with the sender's IP:port info. This makes it easier to track who sent what, especially in a multi-client session. It's a simple but useful enhancement for debugging and clarity.
+
+![img_8.png](img_8.png)![img_9.png](img_9.png)![img_10.png](img_10.png)![img_11.png](img_11.png)
